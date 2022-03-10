@@ -71,7 +71,7 @@ select em.first_name, em. last_name, em.birth_date, em.gender, em.hire_date, ti.
 join titles ti on em.emp_no = ti.emp_no
 join salaries sa on em.emp_no = sa.emp_no
 where sa.to_date > CURRENT_DATE
-GROUP by first_name
+GROUP by first_name;
 
 
 -- 10 table with managers, who are working for us at this moment: first and last name, date of birth, gender, hire_date, title, department name and salary.
@@ -82,17 +82,17 @@ join dept_emp deem on em.emp_no = deem.emp_no
 join departments dep on deem.dept_no = dep.dept_no
 where em.emp_no in (select distinct dept_manager.emp_no from dept_manager
                            where dept_manager.to_date > CURRENT_DATE)
-group by first_name asc
+group by first_name asc;
 
 
 -- bonus
 select em.first_name, em.last_name, em.birth_date, em.gender, em.hire_date, ti.title, dep.dept_name, sa.salary from employees em
-join titles ti on em.emp_no = ti.emp_no
-join salaries sa on em.emp_no = sa.emp_no
-join dept_emp deem on em.emp_no = deem.emp_no
-join departments dep on deem.dept_no = dep.dept_no
-join dept_manager dema on em.emp_no = dema.emp_no
-group by em.first_name asc
+left join titles ti on em.emp_no = ti.emp_no
+left join salaries sa on em.emp_no = sa.emp_no
+left join dept_emp deem on em.emp_no = deem.emp_no
+left join departments dep on deem.dept_no = dep.dept_no
+left join dept_manager dema on em.emp_no = dema.emp_no
+group by em.emp_no asc;
 
 
 -- show how many current employees the company has
@@ -104,10 +104,25 @@ where employees.emp_no in (select distinct salaries.emp_no from salaries
 -- show how many current managers there are
 select count(*) from employees
 where employees.emp_no in (select distinct dept_manager.emp_no from dept_manager
-                           where dept_manager.to_date > CURRENT_DATE)
+                           where dept_manager.to_date > CURRENT_DATE);
 
 
 -- show how many people stopped working for the comp
 select count(*) from employees
 where employees.emp_no not in (select distinct salaries.emp_no from salaries
+                           where salaries.to_date > CURRENT_DATE);
+
+
+-- how many ppl work in each department
+select departments.dept_name, count(*) from employees
+join dept_emp on employees.emp_no = dept_emp.emp_no
+join departments on dept_emp.dept_no = departments.dept_no
+where employees.emp_no in (select distinct salaries.emp_no from salaries
                            where salaries.to_date > CURRENT_DATE)
+group by dept_name asc;
+
+
+--
+select employees.first_name, employees.last_name, sum(salaries.salary) from employees
+join salaries on employees.emp_no = salaries.emp_no
+order by employees.first_name, employees.last_name asc;
