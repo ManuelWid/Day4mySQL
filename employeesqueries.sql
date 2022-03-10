@@ -98,7 +98,7 @@ group by em.emp_no asc;
 -- show how many current employees the company has
 select count(*) from employees
 where employees.emp_no in (select distinct salaries.emp_no from salaries
-                           where salaries.to_date > CURRENT_DATE)
+                           where salaries.to_date > CURRENT_DATE);
 
 
 -- show how many current managers there are
