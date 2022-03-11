@@ -13,7 +13,7 @@ where first_name = "mark";
 
 
 -- 3 first name "Eric" and last name starting with "A"
-select count(employees.first_name) from employees
+select count(employees.emp_no) from employees
 where first_name = "eric" AND last_name like "A%";
 
 
