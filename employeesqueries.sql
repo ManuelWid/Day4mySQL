@@ -19,22 +19,22 @@ where first_name = "eric" AND last_name like "A%";
 
 -- 4 all employees since 1985
 select first_name, last_name from employees
-where employees.emp_no in (select distinct salaries.emp_no from salaries
+where employees.emp_no in (select distinct salaries.emp_no from salaries -- subquery checks if still employed (slaries.to_date is 9999)
                            where salaries.to_date > CURRENT_DATE)
 and (date(hire_date) between "1985-01-01" and "1985-12-31");
 
 
 -- 5 hired between 1990 and 1997
 select first_name, last_name from employees
-where (date(hire_date) between "1990-01-01" and "1997-12-31");
+where (date(hire_date) between "1990-01-01" and "1997-12-31"); -- the date() function is used to change type to date, just in case
 
 
 -- 6 salary higher than 70k
--- 6.1 show all data
+-- 6.1 show all data, takes about 3 sec. on my laptop
 select em.first_name, em.last_name, sa.salary from employees em
 join salaries sa on em.emp_no = sa.emp_no
 where sa.salary > 70000
-group by first_name;
+group by em.emp_no;
 
 -- 6.2 better way
 select em.first_name, em.last_name from employees em
@@ -67,11 +67,11 @@ AND em.hire_date >= "1985-01-01";
 
 
 -- 9 employees, who are working for us at this moment: first and last name, date of birth, gender, hire_date, title and salary.
-select em.first_name, em. last_name, em.birth_date, em.gender, em.hire_date, ti.title, sa.salary from employees em
+select em.first_name, em.last_name, em.birth_date, em.gender, em.hire_date, ti.title, sa.salary from employees em
 join titles ti on em.emp_no = ti.emp_no
 join salaries sa on em.emp_no = sa.emp_no
 where sa.to_date > CURRENT_DATE
-GROUP by first_name;
+GROUP by em.emp_no asc;
 
 
 -- 10 table with managers, who are working for us at this moment: first and last name, date of birth, gender, hire_date, title, department name and salary.
@@ -82,7 +82,7 @@ join dept_emp deem on em.emp_no = deem.emp_no
 join departments dep on deem.dept_no = dep.dept_no
 where em.emp_no in (select distinct dept_manager.emp_no from dept_manager
                            where dept_manager.to_date > CURRENT_DATE)
-group by first_name asc;
+group by em.emp_no asc;
 
 
 -- bonus
@@ -120,9 +120,3 @@ join departments on dept_emp.dept_no = departments.dept_no
 where employees.emp_no in (select distinct salaries.emp_no from salaries
                            where salaries.to_date > CURRENT_DATE)
 group by dept_name asc;
-
-
---
-select employees.first_name, employees.last_name, sum(salaries.salary) from employees
-join salaries on employees.emp_no = salaries.emp_no
-order by employees.first_name, employees.last_name asc;
