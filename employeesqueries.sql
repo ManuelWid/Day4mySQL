@@ -86,13 +86,13 @@ group by first_name asc;
 
 
 -- bonus
-select em.first_name, em.last_name, em.birth_date, em.gender, em.hire_date, ti.title, dep.dept_name, sa.salary from employees em
+select em.*, ti.title, ti.from_date, ti.to_date, dep.dept_no, dep.dept_name, sa.salary from employees em
 left join titles ti on em.emp_no = ti.emp_no
 left join salaries sa on em.emp_no = sa.emp_no
 left join dept_emp deem on em.emp_no = deem.emp_no
 left join departments dep on deem.dept_no = dep.dept_no
 left join dept_manager dema on em.emp_no = dema.emp_no
-group by em.emp_no asc;
+order by em.emp_no asc;
 
 
 -- show how many current employees the company has
